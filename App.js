@@ -4,56 +4,40 @@ import ReactDOM from 'react-dom';
 class App extends React.Component {
   constructor() {
     super();
-    this.state = {val : 0};
     this.update = this.update.bind(this);
+    this.state = {
+      increasing: false
+    }
   }
   update(){
-    this.setState({val: this.state.val + 1});
+    ReactDOM.render(<App value={this.props.value + 1}/>, document.getElementById('app'));
   }
-  // component is ready to be rendered (before placed into the DOM)
-  // we have access to the state and properties, but not to the DOM
-  componentWillMount(){
-    this.setState({m: 2})
+  // give the possibility to decide whether rendering must be done or not (for efficiency)
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      increasing : nextProps.value > this.props.value
+    })
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return nextProps.value % 5 === 0 ;
   }
 
   render(){
-    console.log('rendering !');
-    return <button onClick={this.update}>{this.state.val * this.state.m}</button>
+    console.log(this.state.increasing);
+    return <button onClick={this.update}>{this.props.value}</button>
   }
 
-  // component has been placed into the DOM (Rendered)
-  componentDidMount(){
-    //console.log(ReactDOM.findDOMNode(this));
-    this.inc = setInterval (this.update, 500);
-  }
-
-  componentWillUnmount(){
-    clearInterval(this.inc);
-  }
-}
-
-class Wrapper extends React.Component {
-  constructor() {
-    super();
-    this.mount = this.mount.bind(this);
-    this.unmount = this.unmount.bind(this);
-  }
-  mount() {
-    ReactDOM.render(<App/>, document.getElementById('a'));
-  }
-  unmount() {
-    ReactDOM.unmountComponentAtNode(document.getElementById('a'));
-  }
-  render() {
-    return (
-      <div>
-        <button onClick={this.mount}>Mount</button>
-        <button onClick={this.unmount}>Unmount</button>
-        <div id='a'></div>
-      </div>
-    )
+  componentDidUpdate(prevProps, prevState) {
+    console.log('prevProps', prevProps);
   }
 
 }
 
-export default Wrapper;
+App.defaultProps = {
+  value : 0
+}
+
+
+
+export default App;
