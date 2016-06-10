@@ -11,22 +11,24 @@ class App extends React.Component {
     this.setState({val: this.state.val + 1});
   }
   // component is ready to be rendered (before placed into the DOM)
+  // we have access to the state and properties, but not to the DOM
   componentWillMount(){
-    console.log('mounting !');
+    this.setState({m: 2})
   }
 
   render(){
     console.log('rendering !');
-    return <button onClick={this.update}>{this.state.val}</button>
+    return <button onClick={this.update}>{this.state.val * this.state.m}</button>
   }
 
   // component has been placed into the DOM (Rendered)
   componentDidMount(){
-    console.log('mounted !');
+    //console.log(ReactDOM.findDOMNode(this));
+    this.inc = setInterval (this.update, 500);
   }
 
   componentWillUnmount(){
-    console.log('bye component');
+    clearInterval(this.inc);
   }
 }
 
