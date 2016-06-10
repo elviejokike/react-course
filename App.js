@@ -5,9 +5,9 @@ class App extends React.Component {
   constructor(){
     super()
     this.state = {
-      text: "this is my state"
-    }
-
+      text: ''
+    };
+    this.update = this.update.bind(this);
   }
   update(e){
     this.setState({
@@ -16,12 +16,21 @@ class App extends React.Component {
   }
   render(){
     return (
-        <div>
-          <h1>Hola, {this.state.text}</h1>
-          <input type="text" onChange={this.update.bind(this)}/>
-        </div>
+      <div>
+        <Widget text={this.state.text} update={this.update}/>
+        <Widget text={this.state.text} update={this.update}/>
+      </div>
     )
   }
+}
+
+const Widget = (props) => {
+  return (
+      <div>
+        <h1>Hola, {props.text}</h1>
+        <input type="text" onChange={props.update}/>
+      </div>
+  );
 }
 
 export default App;
