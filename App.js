@@ -1,41 +1,53 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-class App extends React.Component {
+let Mixin = InnerComponent => class extends React.Component {
   constructor() {
     super();
     this.update = this.update.bind(this);
     this.state = {
-      increasing: false
+      val: 0
     }
   }
   update(){
-    ReactDOM.render(<App value={this.props.value + 1}/>, document.getElementById('app'));
-  }
-  // give the possibility to decide whether rendering must be done or not (for efficiency)
-  componentWillReceiveProps(nextProps) {
     this.setState({
-      increasing : nextProps.value > this.props.value
+      val: this.state.val + 1
     })
   }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return nextProps.value % 5 === 0 ;
+  componentWillMount(){
+    console.log('mounting');
   }
-
-  render(){
-    console.log(this.state.increasing);
-    return <button onClick={this.update}>{this.props.value}</button>
+  componentDidMount() {
+    console.log('mounted');
   }
-
-  componentDidUpdate(prevProps, prevState) {
-    console.log('prevProps', prevProps);
+  render() {
+    return (
+      <InnerComponent update= {this.update}
+      {...this.state}
+      {...this.props}/>
+    )
   }
-
 }
 
-App.defaultProps = {
-  value : 0
+const Button = (props) => <button onClick={props.update}>{props.text} - {props.val}</button>
+const Label = (props) => <label onMouseMove={props.update}>{props.text} - {props.val}</label>
+
+// save state, same functionality .. (decoupling functionality from component)
+let ButtonMixed = Mixin(Button);
+let LabelMixed = Mixin(Label);
+
+class App extends React.Component {
+
+  render(){
+    return (
+      <div>
+        <ButtonMixed text="Button"/>
+        <LabelMixed text="Button"/>
+      </div>
+    )
+  }
+
+
 }
 
 
